@@ -1,0 +1,2001 @@
+/* =========================================================
+   MUSIC PLAYER — ESTÉTICA FRUTIGER AERO
+   Céu azul, vidro translúcido, brilho gelatinoso e bolhas.
+
+   Índice
+    1. Variáveis e reset         10. Admin
+    2. Fundo (céu + bolhas)      11. Player
+    3. Botões gelatinosos        12. Modais
+    4. Login                     13. Histórico de busca
+    5. Layout e painéis de vidro 14. Capas
+    6. Sidebar                   15. Ícones
+    7. Topbar                    16. Scrollbar
+    8. Início (hero e cards)     17. Responsivo
+    9. Busca e biblioteca        18. Movimento reduzido
+========================================================= */
+
+
+/* =========================================================
+   1. VARIÁVEIS E RESET
+========================================================= */
+
+:root {
+    --sky-top: #2a9de8;
+    --aqua: #25c7d9;
+    --aqua-dark: #0e8db5;
+    --grass-dark: #2fa63a;
+    --ink: #0b3a5c;
+    --ink-soft: #3b6f8f;
+
+    --glass-edge: rgba(255, 255, 255, 0.85);
+    --shadow: 0 8px 24px rgba(10, 90, 140, 0.25);
+
+    /* vidro usado pela sidebar e pelo conteúdo principal */
+    --panel-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.486), rgba(255, 255, 255, 0.007));
+    --panel-height: calc(100vh - 104px);
+
+    /* fundo claro das listas e cards */
+    --card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.45));
+    --card-shadow: 0 4px 12px rgba(10, 100, 160, 0.18), inset 0 2px 2px rgba(255, 255, 255, 0.9);
+
+    --font: "Segoe UI", Frutiger, "Frutiger Linotype", "Myriad Pro",
+        "Trebuchet MS", Tahoma, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font);
+    color: var(--ink);
+    background: #b6dffd;
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+}
+
+:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px rgba(37, 199, 217, 0.7);
+}
+
+/* texto que não quebra: corta com "..." */
+.ellipsis,
+.music-card h3,
+.music-card p,
+.admin-music-info strong,
+.admin-music-info p,
+.search-result-item h3,
+.search-result-item p {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   2. FUNDO AERO — céu + bolhas (login e app)
+========================================================= */
+
+#bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+#bg .wallpaper {
+    position: absolute;
+    inset: 0;
+}
+
+.wp-bubbles {
+    background:
+        radial-gradient(ellipse 80% 50% at 20% 110%, #b9eaff 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, #c8f5cf 0%, transparent 70%),
+        radial-gradient(ellipse 120% 80% at 50% -10%, #ffe7fb 0%, transparent 55%),
+        linear-gradient(180deg, #b6dffd 0%, #d6ecff 35%, #e7f6ff 60%, #f6fffa 100%);
+}
+
+.wp-bubbles::before,
+.wp-bubbles::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.wp-bubbles::before {
+    filter: blur(0.5px);
+    background:
+        radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.75) 0 16px, transparent 18px),
+        radial-gradient(circle at 18% 30%, rgba(255, 255, 255, 0.30) 0 38px, transparent 42px),
+        radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.55) 0 12px, transparent 14px),
+        radial-gradient(circle at 84% 28%, rgba(255, 255, 255, 0.25) 0 48px, transparent 52px),
+        radial-gradient(circle at 62% 76%, rgba(255, 255, 255, 0.55) 0 22px, transparent 26px),
+        radial-gradient(circle at 70% 84%, rgba(255, 255, 255, 0.22) 0 64px, transparent 68px),
+        radial-gradient(circle at 38% 60%, rgba(255, 255, 255, 0.45) 0 10px, transparent 12px),
+        radial-gradient(circle at 8% 68%, rgba(255, 255, 255, 0.40) 0 18px, transparent 22px);
+}
+
+.wp-bubbles::after {
+    mix-blend-mode: screen;
+    background:
+        radial-gradient(ellipse 600px 380px at 78% 18%, rgba(255, 255, 255, 0.4) 0%, transparent 60%),
+        radial-gradient(ellipse 800px 500px at 10% 110%, rgba(140, 220, 255, 0.5) 0%, transparent 60%);
+}
+
+#flare {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background:
+        radial-gradient(circle at 88% 8%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 14%),
+        radial-gradient(circle at 86% 12%, rgba(255, 200, 80, 0.18) 0%, transparent 18%),
+        radial-gradient(circle at 30% 90%, rgba(255, 255, 255, 0.16) 0%, transparent 30%);
+}
+
+/* bolhas criadas por js/bubbles.js */
+#particles {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.bub {
+    position: absolute;
+    bottom: -140px;
+    border-radius: 50%;
+    opacity: 0;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background:
+        radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.35) 20%, rgba(255, 255, 255, 0) 38%),
+        radial-gradient(circle at 60% 80%, rgba(180, 220, 255, 0.45) 0%, transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12) 0%, rgba(180, 220, 255, 0.08) 60%, transparent 70%);
+    box-shadow:
+        inset 0 0 10px rgba(255, 255, 255, 0.45),
+        inset -4px -8px 14px rgba(80, 140, 200, 0.18),
+        0 4px 12px rgba(80, 140, 200, 0.18);
+    animation: bubFloat var(--dur, 18s) linear infinite;
+    animation-delay: var(--delay, 0s);
+}
+
+.bub::after {
+    content: "";
+    position: absolute;
+    inset: 8% 8% 50% 8%;
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 70%);
+    filter: blur(1px);
+}
+
+@keyframes bubFloat {
+    0% {
+        transform: translate(0, 0) scale(0.92);
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 0.95;
+    }
+
+    50% {
+        transform: translate(var(--drift, 40px), -55vh) scale(1);
+    }
+
+    92% {
+        opacity: 0.95;
+    }
+
+    100% {
+        transform: translate(calc(var(--drift, 40px) * -0.6), -110vh) scale(1.05);
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   3. BOTÕES GELATINOSOS
+   Todo botão verde de vidro usa a classe .btn-jelly.
+   As variações (.secondary-btn, .excluir-musica) vêm depois
+   dela e só trocam as cores.
+========================================================= */
+
+.btn-jelly {
+    position: relative;
+    overflow: hidden;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+
+    color: #fff;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 70, 30, 0.55);
+
+    background: linear-gradient(180deg, #a6f070 0%, #4fc83c 50%, #2fa63a 51%, #5ed84a 100%);
+    border: 1px solid #2c8f33;
+    border-radius: 999px;
+    box-shadow: 0 4px 10px rgba(30, 130, 50, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+
+    transition: transform 0.15s, filter 0.15s;
+}
+
+/* brilho de vidro na metade de cima */
+.btn-jelly::after {
+    content: "";
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 2px;
+    height: 45%;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
+    pointer-events: none;
+}
+
+.btn-jelly:hover {
+    filter: brightness(1.08) saturate(1.1);
+    transform: translateY(-1px);
+}
+
+.btn-jelly:active {
+    filter: brightness(0.95);
+    transform: translateY(1px);
+}
+
+/* variação azul-água */
+.secondary-btn {
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 60, 100, 0.55);
+    background: linear-gradient(180deg, #b9ecff 0%, #4cc2ee 50%, #1796cc 51%, #53c9f0 100%);
+    border-color: #1380ae;
+    box-shadow: 0 4px 10px rgba(20, 110, 170, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* variação vermelha */
+.excluir-musica {
+    text-shadow: 0 1px 2px rgba(100, 0, 0, 0.5);
+    background: linear-gradient(180deg, #ffb0a0 0%, #f0604a 50%, #d03a26 51%, #f2705a 100%);
+    border-color: #b52e1c;
+    box-shadow: 0 3px 8px rgba(180, 50, 30, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+
+/* =========================================================
+   4. LOGIN
+========================================================= */
+
+#login-screen {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container {
+    width: 400px;
+    max-width: calc(100% - 32px);
+    padding: 40px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.35));
+    border: 1px solid var(--glass-edge);
+    border-radius: 28px;
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+
+    box-shadow:
+        0 20px 50px rgba(8, 80, 130, 0.35),
+        inset 0 2px 2px rgba(255, 255, 255, 0.95),
+        inset 0 -10px 30px rgba(120, 210, 255, 0.35);
+}
+
+.login-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.login-logo .brand-logo {
+    width: 112px;
+    height: 112px;
+}
+
+.login-brand {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ink);
+    text-align: center;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.login-sub-titulo {
+    margin-bottom: 6px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink-soft);
+}
+
+/* o "ou" entre Entrar e Criar conta */
+#login-ou {
+    text-align: center;
+    color: var(--ink-soft);
+    font-weight: 600;
+}
+
+#auth-message {
+    min-height: 1em;
+    text-align: center;
+    color: #c62828;
+    font-weight: 600;
+}
+
+.login-container .btn-jelly {
+    padding: 14px;
+}
+
+/* campos de texto (login e formulários do admin) */
+.login-container input,
+.form-group input,
+.file-group input {
+    width: 100%;
+    padding: 13px 16px;
+
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(70, 160, 210, 0.55);
+    border-radius: 14px;
+    box-shadow: inset 0 2px 5px rgba(20, 100, 150, 0.2);
+    outline: none;
+
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.login-container input:focus,
+.form-group input:focus {
+    border-color: var(--aqua);
+    box-shadow: inset 0 2px 5px rgba(20, 100, 150, 0.15), 0 0 0 4px rgba(37, 199, 217, 0.35);
+}
+
+.login-container input::placeholder,
+.search-box input::placeholder {
+    color: #6f9bb5;
+}
+
+
+/* =========================================================
+   5. LAYOUT E PAINÉIS DE VIDRO
+========================================================= */
+
+/* fixed + inset: o app sempre ocupa a janela inteira, a partir do topo,
+   mesmo que algum outro elemento da página ocupe espaço acima dele */
+#app {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 14px 0;
+}
+
+/* sidebar e conteúdo principal compartilham o mesmo vidro transparente */
+.sidebar,
+.main-content {
+    height: var(--panel-height);
+
+    background: var(--panel-bg);
+    border: 1px solid var(--glass-edge);
+    border-radius: 26px;
+    backdrop-filter: blur(14px) saturate(1.3);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    box-shadow: var(--shadow), inset 0 2px 2px #fff;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.page-section {
+    min-width: 0;
+    padding-bottom: 40px;
+}
+
+.page-title {
+    padding: 36px 26px 22px;
+}
+
+.page-title h1 {
+    margin-bottom: 8px;
+    font-size: 36px;
+    color: var(--ink);
+    text-shadow: 0 1px 0 #fff, 0 0 14px rgba(255, 255, 255, 0.8);
+}
+
+.page-title p {
+    color: var(--ink-soft);
+}
+
+.small-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--ink-soft);
+}
+
+
+/* =========================================================
+   6. SIDEBAR
+========================================================= */
+
+.sidebar {
+    width: 240px;
+    padding: 22px 14px;
+
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    padding-left: 10px;
+
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--ink);
+    text-shadow: 0 1px 0 #fff;
+}
+
+.logo-text {
+    min-width: 0;
+    white-space: nowrap;
+}
+
+/* logo (imagem) usada na sidebar e no login */
+.brand-logo {
+    display: block;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 3px 5px rgba(10, 100, 160, 0.35));
+}
+
+.main-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* .nav-item e .logout-btn têm a mesma caixa (inclusive a borda),
+   por isso os ícones ficam alinhados e centralizados juntos */
+.nav-item,
+.logout-btn {
+    width: 100%;
+    padding: 11px 15px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 15px;
+    font-weight: 700;
+    text-align: left;
+
+    border: 1px solid transparent;
+    border-radius: 16px;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.nav-item > [data-icon],
+.logout-btn > [data-icon] {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.nav-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-item:hover {
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(255, 255, 255, 0.9);
+}
+
+.nav-item.active {
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 70, 110, 0.5);
+    background: linear-gradient(180deg, #7fe0f5 0%, #25b4de 50%, #0e8db5 51%, #36c3e8 100%);
+    border-color: #0e7fa8;
+    box-shadow: 0 3px 8px rgba(10, 110, 160, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.85);
+}
+
+.admin-menu {
+    margin-top: 30px;
+}
+
+.menu-title {
+    margin-bottom: 10px;
+    padding: 0 15px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-soft);
+}
+
+.sidebar-space {
+    flex: 1;
+}
+
+.sidebar-bottom {
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 -1px 0 rgba(70, 150, 200, 0.2);
+}
+
+.logout-btn:hover {
+    color: #a32020;
+    background: rgba(255, 255, 255, 0.55);
+}
+
+
+/* =========================================================
+   7. TOPBAR
+========================================================= */
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    height: 70px;
+    padding: 0 26px;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.45));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.navigation-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.circle-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+
+    color: var(--ink);
+    background:
+        radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.95) 0 35%, transparent 60%),
+        linear-gradient(180deg, #d9f4ff, #8fd6f2);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(10, 100, 160, 0.3);
+
+    transition: filter 0.15s;
+}
+
+.circle-btn:hover {
+    filter: brightness(1.08);
+}
+
+.circle-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+    filter: none;
+}
+
+.search-box {
+    width: 400px;
+    max-width: 100%;
+    height: 42px;
+    padding: 0 18px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(70, 160, 210, 0.5);
+    border-radius: 999px;
+    box-shadow: inset 0 2px 5px rgba(20, 100, 150, 0.2);
+}
+
+.search-box:focus-within {
+    box-shadow: inset 0 2px 5px rgba(20, 100, 150, 0.15), 0 0 0 4px rgba(37, 199, 217, 0.35);
+}
+
+.search-box input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.search-box input:focus-visible {
+    box-shadow: none;
+}
+
+.search-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.top-user {
+    margin-left: auto;
+}
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 80, 30, 0.5);
+
+    background:
+        radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.85) 0 14%, transparent 34%),
+        linear-gradient(180deg, #8fe86a, #2fa63a);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 3px 8px rgba(30, 120, 50, 0.4);
+}
+
+
+/* =========================================================
+   8. INÍCIO — HERO, CHIPS E CARDS
+========================================================= */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+
+    margin: 25px 26px;
+    min-height: 240px;
+    padding: 38px;
+
+    display: flex;
+    align-items: flex-end;
+
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 24px;
+    background:
+        radial-gradient(ellipse 90% 45% at 50% 125%, #9be860 0 55%, transparent 56%),
+        linear-gradient(135deg, #1b8fe0 0%, #2cc4e6 55%, #7ae8c6 100%);
+    box-shadow: 0 12px 28px rgba(10, 100, 160, 0.35), inset 0 2px 3px rgba(255, 255, 255, 0.8);
+}
+
+/* reflexo de vidro */
+.hero::before {
+    content: "";
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    top: -60%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.05));
+    pointer-events: none;
+}
+
+/* bolha grande */
+.hero::after {
+    content: "";
+    position: absolute;
+    right: 40px;
+    top: 30px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background:
+        radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.95) 0 10%, transparent 26%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0.6) 100%);
+    pointer-events: none;
+}
+
+.hero > div {
+    position: relative;
+    z-index: 1;
+}
+
+.hero h1 {
+    margin: 6px 0 12px;
+    font-size: 44px;
+    line-height: 1.1;
+    text-shadow: 0 2px 6px rgba(0, 70, 120, 0.45);
+}
+
+.hero p {
+    text-shadow: 0 1px 3px rgba(0, 70, 120, 0.45);
+}
+
+.hero .small-title {
+    color: #e6fbff;
+}
+
+.music-section {
+    padding: 0 26px 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.section-header h2 {
+    color: var(--ink);
+    text-shadow: 0 1px 0 #fff;
+}
+
+.section-header button {
+    padding: 7px 16px;
+    color: var(--aqua-dark);
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid #fff;
+    border-radius: 999px;
+    box-shadow: 0 2px 5px rgba(10, 100, 160, 0.2);
+}
+
+.section-header button:hover {
+    background: #fff;
+}
+
+/* ----- filtro por estilo (chips) ----- */
+
+.genre-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.genre-chips:empty {
+    display: none;
+}
+
+#library-genres {
+    padding: 0 26px 16px;
+    margin-bottom: 0;
+}
+
+.genre-chip {
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+
+    background:
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.95) 0 35%, transparent 70%),
+        linear-gradient(180deg, #eaf8ff, #bfe6f7);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    border-radius: 999px;
+    box-shadow: 0 2px 5px rgba(10, 100, 160, 0.25);
+
+    transition: filter 0.15s, transform 0.15s;
+}
+
+.genre-chip:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+}
+
+.genre-chip.active {
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 70, 110, 0.5);
+    background:
+        radial-gradient(ellipse 70% 40% at 50% 22%, rgba(255, 255, 255, 0.7), transparent 70%),
+        linear-gradient(180deg, #5fd0ee, #1a9ac8);
+}
+
+.genre-count {
+    margin-left: 4px;
+    font-weight: 500;
+    opacity: 0.7;
+}
+
+/* ----- grade e cards de música ----- */
+
+.music-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
+    gap: 20px;
+}
+
+#library-music-list {
+    padding: 0 26px 30px;
+}
+
+.music-card {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    padding: 14px;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+    border: 1px solid #fff;
+    border-radius: 20px;
+    box-shadow: 0 6px 16px rgba(10, 100, 160, 0.22), inset 0 2px 2px rgba(255, 255, 255, 0.95);
+
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.music-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(10, 100, 160, 0.32), inset 0 2px 2px rgba(255, 255, 255, 0.95);
+}
+
+.music-card h3 {
+    margin-bottom: 4px;
+    font-size: 16px;
+    color: var(--ink);
+}
+
+.music-card p {
+    margin-bottom: 14px;
+    font-size: 14px;
+    color: var(--ink-soft);
+}
+
+.music-card-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    min-width: 0;
+}
+
+/* botões "Tocar" e "coração" (cards e busca) */
+.play-music {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 10px;
+}
+
+.add-to-library {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 38px;
+    padding: 0;
+}
+
+
+/* =========================================================
+   9. BUSCA E BIBLIOTECA
+========================================================= */
+
+.search-results {
+    padding: 0 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* linha de resultado (busca) e de música (admin) */
+.search-result-item,
+.admin-music-item {
+    min-width: 0;
+    max-width: 100%;
+    padding: 14px 18px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    background: var(--card-bg);
+    border: 1px solid #fff;
+    border-radius: 18px;
+    box-shadow: var(--card-shadow);
+}
+
+.search-result-item h3 {
+    flex: 1 1 0;
+    color: var(--ink);
+}
+
+.search-result-item p {
+    flex: 0 1 200px;
+    color: var(--ink-soft);
+}
+
+.search-result-item .play-search {
+    flex-shrink: 0;
+    padding: 8px 18px;
+}
+
+.library-empty {
+    margin: 26px;
+    padding: 70px 20px;
+    text-align: center;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.35));
+    border: 1px solid #fff;
+    border-radius: 24px;
+    box-shadow: 0 6px 16px rgba(10, 100, 160, 0.2), inset 0 2px 2px rgba(255, 255, 255, 0.95);
+}
+
+.library-empty h2 {
+    margin-bottom: 8px;
+    color: var(--ink);
+}
+
+.library-empty p {
+    color: var(--ink-soft);
+}
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.9) 0 12%, transparent 30%),
+        linear-gradient(180deg, #6fe0f0, #1496c9);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 8px 18px rgba(10, 100, 160, 0.4), inset 0 -8px 16px rgba(0, 80, 140, 0.35);
+}
+
+
+/* =========================================================
+   10. ADMIN
+========================================================= */
+
+.admin-card {
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 26px 36px;
+    padding: 28px;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.35));
+    border: 1px solid #fff;
+    border-radius: 24px;
+    box-shadow: 0 6px 16px rgba(10, 100, 160, 0.2), inset 0 2px 2px rgba(255, 255, 255, 0.95);
+}
+
+.admin-card h2 {
+    margin-bottom: 22px;
+    color: var(--ink);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+    gap: 15px;
+}
+
+.form-group {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group label,
+.file-group label {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--ink-soft);
+}
+
+.form-group input {
+    letter-spacing: 0.2px;
+    word-spacing: 1px;
+}
+
+.file-group {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.file-group input {
+    min-width: 0;
+    max-width: 100%;
+    color: var(--ink-soft);
+}
+
+.file-hint {
+    min-height: 1em;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--aqua-dark);
+}
+
+.cover-preview {
+    width: 110px;
+    height: 110px;
+    max-width: 100%;
+    margin-top: 6px;
+    object-fit: cover;
+    border: 2px solid #fff;
+    border-radius: 14px;
+    box-shadow: 0 3px 8px rgba(10, 100, 160, 0.3);
+}
+
+.add-music-btn {
+    margin-top: 24px;
+    padding: 12px 26px;
+}
+
+#admin-message,
+#edit-message {
+    min-height: 1em;
+    color: var(--grass-dark);
+    font-weight: 600;
+}
+
+#admin-message {
+    margin-top: 14px;
+}
+
+#edit-message {
+    text-align: center;
+}
+
+.admin-music-area {
+    min-width: 0;
+    padding: 0 26px;
+}
+
+.admin-music-area h2 {
+    margin-bottom: 18px;
+    color: var(--ink);
+}
+
+.admin-music-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* nome + detalhes: ocupa o espaço que sobra e corta com "..." */
+.admin-music-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-music-info strong,
+.admin-music-info p {
+    display: block;
+}
+
+.admin-music-info strong {
+    color: var(--ink);
+}
+
+.admin-music-info p {
+    color: var(--ink-soft);
+}
+
+.admin-music-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.editar-musica,
+.excluir-musica {
+    padding: 8px 16px;
+}
+
+
+/* =========================================================
+   11. PLAYER
+========================================================= */
+
+.player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    width: 100%;
+    height: 90px;
+    padding: 10px 24px;
+
+    display: flex;
+    align-items: center;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(190, 235, 255, 0.65));
+    border-top: 1px solid #fff;
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    box-shadow: 0 -6px 20px rgba(10, 100, 160, 0.25), inset 0 2px 2px rgba(255, 255, 255, 0.95);
+}
+
+.player-info {
+    width: 30%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.player-info h4 {
+    margin-bottom: 4px;
+    color: var(--ink);
+}
+
+.player-info p {
+    font-size: 13px;
+    color: var(--ink-soft);
+}
+
+.player-cover {
+    position: relative;
+    overflow: hidden;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    max-width: 56px;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    background: linear-gradient(135deg, #a8e6ff, #7ae8c6);
+    border: 2px solid #fff;
+    border-radius: 14px;
+    box-shadow: 0 3px 8px rgba(10, 100, 160, 0.3);
+}
+
+.player-cover img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.2) contrast(1.05);
+}
+
+.player-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%);
+}
+
+/* sem música: mostra só a logo redonda, sem moldura quadrada */
+.player-cover.is-empty {
+    background: none;
+    border-color: transparent;
+    box-shadow: none;
+    overflow: visible;
+}
+
+.player-cover.is-empty::after {
+    display: none;
+}
+
+.player-cover.is-empty img {
+    object-fit: contain;
+    filter: drop-shadow(0 3px 5px rgba(10, 100, 160, 0.35));
+}
+
+.player-center {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.player-center audio {
+    display: none;
+}
+
+.player-buttons {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.player-buttons button {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+
+    color: var(--ink-soft);
+    background: transparent;
+    transition: color 0.15s, transform 0.15s;
+}
+
+.player-buttons button > .aero-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.player-buttons button:hover {
+    color: var(--aqua-dark);
+    transform: scale(1.12);
+}
+
+/* botão play: bolha verde de vidro */
+.player-buttons .play-button {
+    width: 38px;
+    height: 38px;
+
+    color: #fff;
+    background:
+        radial-gradient(ellipse 70% 40% at 50% 22%, rgba(255, 255, 255, 0.85), transparent 70%),
+        linear-gradient(180deg, #7fe05a, #2fa63a);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 3px 9px rgba(30, 130, 50, 0.5);
+}
+
+.player-buttons .play-button > .aero-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.player-buttons .play-button:hover {
+    color: #fff;
+    filter: brightness(1.1);
+}
+
+/* ----- barra de progresso ----- */
+
+.progress-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.time-label {
+    min-width: 34px;
+    font-size: 12px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+}
+
+.progress-bar {
+    position: relative;
+    flex: 1;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    touch-action: none;
+}
+
+/* trilho (barra e volume usam o mesmo visual) */
+.progress-bar::before,
+.progress-fill {
+    content: "";
+    position: absolute;
+    left: 0;
+    height: 5px;
+    border-radius: 999px;
+}
+
+.progress-bar::before {
+    right: 0;
+    background: rgba(11, 58, 92, 0.18);
+    box-shadow: inset 0 1px 2px rgba(10, 60, 100, 0.25);
+}
+
+.progress-fill {
+    width: 0%;
+    background: linear-gradient(180deg, #7fe0f0, var(--aqua-dark));
+    box-shadow: 0 0 6px rgba(37, 199, 217, 0.6);
+    pointer-events: none;
+}
+
+.progress-handle {
+    position: absolute;
+    left: 0%;
+    width: 13px;
+    height: 13px;
+    background: #fff;
+    border: 2px solid var(--aqua-dark);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(10, 90, 140, 0.4);
+    transform: translateX(-50%);
+    pointer-events: none;
+    transition: transform 0.1s;
+}
+
+.progress-bar:hover .progress-handle,
+.progress-bar.dragging .progress-handle {
+    transform: translateX(-50%) scale(1.25);
+}
+
+/* ----- volume ----- */
+
+.player-volume {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.volume-icon {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: transparent;
+}
+
+.volume-icon > .aero-icon {
+    width: 22px;
+    height: 22px;
+}
+
+.player-volume input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(11, 58, 92, 0.18);
+    box-shadow: inset 0 1px 2px rgba(10, 60, 100, 0.25);
+    outline: none;
+    cursor: pointer;
+}
+
+.player-volume input[type="range"]::-webkit-slider-runnable-track {
+    height: 5px;
+    border-radius: 999px;
+    background: transparent;
+}
+
+.player-volume input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    margin-top: -4.5px;
+    background: #fff;
+    border: 2px solid var(--aqua-dark);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(10, 90, 140, 0.4);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.player-volume input[type="range"]:hover::-webkit-slider-thumb {
+    transform: scale(1.2);
+}
+
+.player-volume input[type="range"]::-moz-range-track {
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(11, 58, 92, 0.18);
+}
+
+.player-volume input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border: 2px solid var(--aqua-dark);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(10, 90, 140, 0.4);
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   12. MODAIS (editar e confirmar exclusão)
+========================================================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(10, 40, 70, 0.45);
+    backdrop-filter: blur(4px);
+}
+
+.modal-card {
+    width: 480px;
+    max-width: calc(100% - 32px);
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    padding: 28px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
+    border: 1px solid var(--glass-edge);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(8, 80, 130, 0.45), inset 0 2px 2px rgba(255, 255, 255, 0.95);
+}
+
+.modal-card h2 {
+    color: var(--ink);
+}
+
+.modal-card .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.modal-actions {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+/* margin: 0 anula o margin-top do .add-music-btn,
+   que deixava "Salvar alterações" e "Cancelar" tortos */
+.modal-actions button {
+    flex: 1;
+    margin: 0;
+    padding: 12px;
+}
+
+.confirm-card {
+    width: 380px;
+    text-align: center;
+}
+
+.confirm-card p {
+    color: var(--ink-soft);
+}
+
+
+/* =========================================================
+   13. HISTÓRICO DE BUSCA
+========================================================= */
+
+.search-history {
+    padding: 0 26px;
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.history-header h2 {
+    color: var(--ink);
+}
+
+.history-clear {
+    padding: 6px 16px;
+    font-weight: 600;
+    color: var(--ink);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5));
+    border: 1px solid #fff;
+    border-radius: 999px;
+    box-shadow: 0 3px 8px rgba(10, 100, 160, 0.2), inset 0 1px 1px #fff;
+}
+
+.history-clear:hover {
+    filter: brightness(1.05);
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px 6px 6px;
+
+    background: var(--card-bg);
+    border: 1px solid #fff;
+    border-radius: 16px;
+    box-shadow: 0 3px 10px rgba(10, 100, 160, 0.15), inset 0 2px 2px rgba(255, 255, 255, 0.9);
+}
+
+.history-term {
+    flex: 1;
+    padding: 9px 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    background: none;
+    border-radius: 12px;
+}
+
+.history-term:hover {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.history-remove {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+
+    color: var(--ink-soft);
+    background: none;
+    border-radius: 50%;
+}
+
+.history-remove:hover {
+    color: #c62828;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.history-empty {
+    padding: 22px;
+    text-align: center;
+    color: var(--ink-soft);
+}
+
+
+/* =========================================================
+   14. CAPAS (com brilho de vidro por cima)
+========================================================= */
+
+.cover {
+    position: relative;
+    display: block;
+    overflow: hidden;
+
+    background: linear-gradient(135deg, #a8e6ff, #7ae8c6);
+    border: 2px solid #fff;
+    border-radius: 14px;
+    box-shadow: 0 3px 8px rgba(10, 100, 160, 0.3);
+}
+
+.cover img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.2) contrast(1.05) brightness(1.03);
+}
+
+.cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.08) 38%, transparent 50%),
+        linear-gradient(0deg, rgba(10, 90, 150, 0.28) 0%, transparent 45%),
+        linear-gradient(135deg, rgba(120, 220, 255, 0.18), rgba(255, 150, 230, 0.12));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.music-card .cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin-bottom: 12px;
+}
+
+.search-result-item .cover,
+.admin-music-item .cover {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   15. ÍCONES AERO (SVGs criados por js/icons.js)
+========================================================= */
+
+.aero-icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    vertical-align: -0.15em;
+}
+
+.aero-color {
+    filter: drop-shadow(0 1px 1.5px rgba(10, 70, 130, 0.35));
+}
+
+/* quando o ícone é o conteúdo de um <span data-icon>, ele preenche o span */
+[data-icon] > .aero-icon {
+    width: 100%;
+    height: 100%;
+    vertical-align: middle;
+}
+
+/* ícones dentro de botões com texto */
+.btn-jelly .aero-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.add-to-library .aero-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.circle-btn > .aero-icon {
+    width: 16px;
+    height: 16px;
+}
+
+
+/* =========================================================
+   16. SCROLLBAR (fina, 6px)
+========================================================= */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #8fdcf5, #3fb4e0);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #a8e8fb, #55c4ee);
+}
+
+/* Firefox */
+@supports not selector(::-webkit-scrollbar) {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #5cc4ec transparent;
+    }
+}
+
+
+/* =========================================================
+   17. RESPONSIVO
+========================================================= */
+
+/* ----- tablet: sidebar vira uma faixa só de ícones ----- */
+@media (max-width: 1000px) {
+
+    .sidebar {
+        width: 84px;
+        padding: 20px 10px;
+    }
+
+    .logo {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .logo-text,
+    .nav-label,
+    .menu-title {
+        display: none;
+    }
+
+    /* ícones centralizados na faixa */
+    .nav-item,
+    .logout-btn {
+        justify-content: center;
+        gap: 0;
+        padding: 11px 0;
+    }
+
+    .modal-card .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .search-box {
+        width: 260px;
+    }
+
+    .player-info,
+    .player-volume {
+        width: 28%;
+    }
+
+    .player-center {
+        width: 44%;
+    }
+
+    .player-volume input[type="range"] {
+        width: 70px;
+    }
+}
+
+/* ----- celular ----- */
+@media (max-width: 700px) {
+
+    :root {
+        --panel-height: calc(100vh - 185px);
+    }
+
+    #app {
+        gap: 10px;
+        padding: 10px 10px 0;
+    }
+
+    .sidebar {
+        width: 64px;
+        padding: 16px 6px;
+    }
+
+    .topbar {
+        padding: 0 15px;
+        gap: 10px;
+    }
+
+    .navigation-buttons {
+        display: none;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .hero {
+        margin: 15px;
+        min-height: 200px;
+        padding: 25px;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+    }
+
+    .hero::after {
+        top: 16px;
+        right: 16px;
+        width: 90px;
+        height: 90px;
+    }
+
+    .page-title {
+        padding: 25px 15px;
+    }
+
+    .music-section,
+    .search-history,
+    .search-results,
+    .admin-music-area {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    #library-music-list {
+        padding: 0 15px 30px;
+    }
+
+    #library-genres {
+        padding: 0 15px 16px;
+    }
+
+    .music-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .music-card {
+        padding: 10px;
+        border-radius: 16px;
+    }
+
+    .music-card h3 {
+        font-size: 14px;
+    }
+
+    .music-card p {
+        margin-bottom: 10px;
+        font-size: 12px;
+    }
+
+    .play-music {
+        padding: 8px 6px;
+        font-size: 13px;
+    }
+
+    .search-result-item {
+        gap: 10px;
+        padding: 10px 12px;
+    }
+
+    .search-result-item p {
+        display: none;
+    }
+
+    .search-result-item .play-search {
+        padding: 8px 12px;
+    }
+
+    .admin-card {
+        margin: 0 15px 30px;
+        padding: 20px;
+    }
+
+    .modal-card .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* admin: cover + nome na 1ª linha; Editar/Excluir descem para a 2ª,
+       então os botões nunca ficam em cima do nome da música */
+    .admin-music-item {
+        flex-wrap: wrap;
+        padding: 12px;
+    }
+
+    .admin-music-actions {
+        flex: 1 1 100%;
+    }
+
+    .admin-music-actions button {
+        flex: 1;
+    }
+
+    /* player em duas linhas, sem esconder nenhum controle */
+    .player {
+        height: auto;
+        min-height: 70px;
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 10px;
+        padding: 10px 14px;
+    }
+
+    .player-info {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+    }
+
+    .player-volume {
+        flex: 0 0 auto;
+        width: auto;
+    }
+
+    .player-center {
+        order: 3;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* "Tocar" e coração empilham, um embaixo do outro */
+    .music-card-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .music-card-actions .btn-jelly {
+        flex: none;
+        width: 100%;
+        height: 34px;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .player-info p {
+        display: none;
+    }
+
+    .player-volume input[type="range"] {
+        width: 56px;
+    }
+
+    .modal-card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 360px) {
+
+    .play-music .aero-icon {
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   18. MOVIMENTO REDUZIDO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    * {
+        transition: none !important;
+    }
+
+    #particles {
+        display: none;
+    }
+}
